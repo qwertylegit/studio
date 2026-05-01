@@ -1,35 +1,67 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Video/Photo Album - Studio Sản Việt</title>
     <style>
-        body { font-family: sans-serif; text-align: center; padding: 40px 20px; background: #f4f7f9; }
-        .container { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 400px; margin: auto; }
-        .btn { display: block; padding: 18px; border-radius: 12px; font-weight: bold; text-decoration: none; margin-bottom: 15px; font-size: 16px; }
+        body { font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; text-align: center; padding: 40px 20px; background: #f4f7f9; color: #333; }
+        .container { background: white; padding: 30px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); max-width: 400px; margin: auto; }
+        h2 { font-size: 20px; color: #1a1a1a; margin-bottom: 10px; letter-spacing: 0.5px; }
+        .studio-name { font-size: 14px; color: #666; margin-bottom: 30px; font-weight: 500; }
+        
+        .btn { display: block; padding: 18px; border-radius: 14px; font-weight: bold; text-decoration: none; margin-bottom: 16px; font-size: 15px; transition: all 0.2s ease; border: none; cursor: pointer; }
         .btn-drive { background: #1a73e8; color: white; }
         .btn-lan { background: #d93025; color: white; }
-        h2 { font-size: 20px; color: #333; margin-bottom: 25px; }
+        .btn-refresh { background: #fff; color: #555; border: 1px solid #ddd; margin-top: 10px; font-size: 14px; padding: 12px; }
+        
+        .btn:active { transform: scale(0.97); opacity: 0.9; }
+        .hint { font-size: 12px; color: #888; margin-top: 5px; line-height: 1.4; }
+        footer { margin-top: 30px; font-size: 11px; color: #bbb; border-top: 1px solid #eee; padding-top: 20px; }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>VIDEO/PHOTO ALBUM</h2>
+        <div class="studio-name">STUDIO SẢN VIỆT</div>
+        
         <a id="driveLink" href="#" class="btn btn-drive">TẢI QUA GOOGLE DRIVE</a>
-        <a id="lanLink" href="#" class="btn btn-lan">TẢI TỐC ĐỘ CAO (WIFI)</a>
-        <p style="font-size:12px; color:#666;">© Studio Sản Việt - Nha Trang</p>
+        
+        <a id="lanLink" href="#" class="btn btn-lan">
+            TẢI TỐC ĐỘ CAO (WIFI)
+        </a>
+        <p class="hint">Kết nối Wi-Fi Studio để tải nhanh hơn</p>
+
+        <button class="btn btn-refresh" onclick="window.location.reload()">LÀM MỚI TRANG (REFRESH)</button>
+        
+        <footer>
+            © 2026 Studio Sản Việt - Nha Trang<br>
+            Hệ thống cung cấp ảnh tự động
+        </footer>
     </div>
+
     <script>
         const p = new URLSearchParams(window.location.search);
-        const port = p.get('port') || "8080";
+        const port = p.get('port') || "8081";
+        
+        // Cấu trúc link LAN: http://IP:PORT/Thang/Ngay/ID/
         const lanUrl = `http://${p.get('ip')}:${port}/${p.get('t')}/${p.get('n')}/${p.get('id')}/`;
         const driveUrl = `https://drive.google.com/drive/folders/${p.get('fid')}`;
+        
         document.getElementById('lanLink').href = lanUrl;
         document.getElementById('driveLink').href = driveUrl;
+
+        // Tự động chuyển hướng vào LAN nếu đang ở Studio (giúp khách không phải bấm)
         const img = new Image();
-        img.onload = () => window.location.replace(lanUrl);
-        img.src = lanUrl + "?v=" + Date.now();
+        img.onload = () => {
+            console.log("Đã kết nối LAN, đang chuyển hướng...");
+            window.location.replace(lanUrl);
+        };
+        img.onerror = () => {
+            console.log("Không ở trong mạng LAN Studio.");
+        };
+        // Kiểm tra kết nối tới server cục bộ bằng một ảnh pixel nhỏ
+        img.src = lanUrl + "favicon.ico?v=" + Date.now();
     </script>
 </body>
 </html>
