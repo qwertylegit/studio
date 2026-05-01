@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Studio Sản Việt</title>
+    <title>Studio Nha Trang</title>
 </head>
 <body style="text-align:center; padding-top:100px; font-family:sans-serif; background:#f4f7f9;">
     <div style="border:4px solid #f3f3f3; border-top:4px solid #3498db; border-radius:50%; width:40px; height:40px; animation:spin 1s linear infinite; margin:20px auto;"></div>
-    <h3 id="stt">Đang tối ưu tốc độ tải ảnh...</h3>
+    <h3 id="stt">Đang mở kho ảnh...</h3>
     
     <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
 
@@ -24,39 +24,21 @@
         const driveUrl = `https://drive.google.com/drive/folders/${config.fid}`;
         const lanUrl = `http://${config.ip}:8080/${config.t}/${config.n}/${config.id}/`;
 
-        if (!config.fid || !config.ip) {
-            window.location.replace("https://drive.google.com");
-        } else {
-            let jumped = false;
-
-            // Kiểm tra LAN bằng cách fetch với chế độ no-cors
-            // Tăng timeout lên 2.5 giây để Wifi kịp phản hồi
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => {
-                if (!jumped) {
-                    jumped = true;
-                    controller.abort();
-                    window.location.replace(driveUrl);
-                }
-            }, 2500); 
-
-            fetch(lanUrl, { mode: 'no-cors', signal: controller.signal })
-                .then(() => {
-                    if (!jumped) {
-                        jumped = true;
-                        clearTimeout(timeoutId);
-                        window.location.replace(lanUrl);
-                    }
-                })
-                .catch(() => {
-                    // Nếu lỗi ngay lập tức (thường do 4G không thấy IP)
-                    if (!jumped) {
-                        jumped = true;
-                        clearTimeout(timeoutId);
-                        window.location.replace(driveUrl);
-                    }
-                });
+        let jumped = false;
+        function goTo(url) {
+            if (!jumped) { jumped = true; window.location.replace(url); }
         }
+
+        // Kiểm tra xem có đang ở chung Wifi với máy tính Nha Trang không
+        const checker = new Image();
+        checker.onload = () => goTo(lanUrl); // Thấy máy tính -> Vào LAN
+        checker.onerror = () => goTo(driveUrl); // Không thấy (4G) -> Vào Drive
+
+        // Thử tải 1 file bất kỳ để test kết nối
+        checker.src = lanUrl + "?v=" + Date.now();
+
+        // Sau 2.5 giây nếu vẫn đứng im thì ép nhảy vào Drive
+        setTimeout(() => goTo(driveUrl), 2500);
     </script>
 </body>
 </html>
