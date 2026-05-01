@@ -3,24 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Studio Nha Trang</title>
+    <title>Studio Sản Việt - Download</title>
     <style>
-        body { font-family: sans-serif; text-align: center; padding-top: 80px; background: #f4f7f9; color: #333; }
-        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .btn { display: inline-block; margin-top: 20px; padding: 15px 25px; background: #2ecc71; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; padding: 40px 20px; background: #f0f2f5; color: #333; }
+        .container { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 450px; margin: auto; }
+        h2 { color: #1a73e8; margin-bottom: 10px; font-size: 22px; }
+        p { color: #666; margin-bottom: 30px; font-size: 15px; }
+        
+        .btn { display: block; padding: 18px; border-radius: 12px; font-weight: bold; text-decoration: none; margin-bottom: 15px; transition: all 0.3s ease; font-size: 16px; position: relative; overflow: hidden; }
+        
+        /* Nút LAN - Ưu tiên hàng đầu */
+        .btn-lan { background: #28a745; color: white; border: none; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3); }
+        .btn-lan:active { transform: scale(0.98); }
+        .btn-lan span { display: block; font-size: 12px; font-weight: normal; opacity: 0.9; }
+
+        /* Nút Drive - Tùy chọn phụ */
+        .btn-drive { background: #ffffff; color: #444; border: 2px solid #dadce0; }
+        .btn-drive:active { background: #f8f9fa; }
+
+        .footer-note { font-size: 12px; color: #999; margin-top: 20px; }
+        .wifi-icon { font-size: 24px; margin-bottom: 10px; display: block; }
     </style>
 </head>
 <body>
-    <div class="loader"></div>
-    <h3 id="stt">Đang kết nối Wi-Fi Studio...</h3>
-    
-    <!-- Nút bấm này sẽ xuất hiện nếu trình duyệt chặn tự động nhảy -->
-    <div id="manual" style="display:none;">
-        <p>Nếu không tự chuyển hướng, bấm nút dưới đây:</p>
-        <a id="lanBtn" href="#" class="btn">XEM ẢNH TẠI STUDIO</a>
-        <br><br>
-        <a id="driveBtn" href="#" style="color: #888; font-size: 14px;">Xem qua Google Drive (Chậm hơn)</a>
+    <div class="container">
+        <span class="wifi-icon">📸</span>
+        <h2>Tải Ảnh Của Bạn</h2>
+        <p>Vui lòng chọn phương thức tải ảnh nhanh nhất</p>
+
+        <!-- Nút Tải LAN (Nhanh nhất - Phía dưới theo yêu cầu) -->
+        <a id="lanLink" href="#" class="btn btn-lan">
+            DOWNLOAD NỘI BỘ (LAN)
+            <span>Tốc độ cao - Chỉ dành cho Wi-Fi Studio</span>
+        </a>
+
+        <!-- Nút Tải Drive (Phía trên theo yêu cầu) -->
+        <a id="driveLink" href="#" class="btn btn-drive">
+            Download with Google Drive
+        </a>
+
+        <div class="footer-note">
+            * Nếu dùng 4G, vui lòng chọn Google Drive.
+        </div>
     </div>
 
     <script>
@@ -32,36 +56,17 @@
         const lanUrl = `http://${config.ip}:8080/${config.t}/${config.n}/${config.id}/`;
         const driveUrl = `https://drive.google.com/drive/folders/${config.fid}`;
 
-        document.getElementById('lanBtn').href = lanUrl;
-        document.getElementById('driveBtn').href = driveUrl;
+        // Gán link vào các nút
+        document.getElementById('lanLink').href = lanUrl;
+        document.getElementById('driveLink').href = driveUrl;
 
-        let jumped = false;
-        function goTo(url) {
-            if (!jumped) { jumped = true; window.location.replace(url); }
-        }
-
-        // Thử nhảy tự động bằng thẻ Image (ít bị chặn hơn fetch)
-        const checker = new Image();
-        checker.onload = () => goTo(lanUrl);
-        checker.onerror = () => {
-            // Nếu dùng 4G, onerror sẽ kích hoạt nhanh -> Nhảy Drive
-            if (navigator.connection && navigator.connection.type === 'cellular') {
-                goTo(driveUrl);
-            }
+        // Tự động chuyển hướng nếu phát hiện LAN cực nhanh (Optional)
+        const checkLan = new Image();
+        checkLan.onload = () => {
+            // Chỉ tự nhảy nếu máy khách phản hồi cực nhanh trong 1 giây đầu
+            window.location.replace(lanUrl);
         };
-        checker.src = lanUrl + "favicon.ico?v=" + Date.now();
-
-        // Sau 1.5 giây nếu không nhảy được, hiện nút bấm cho khách tự nhấn
-        setTimeout(() => {
-            if (!jumped) {
-                document.getElementById('stt').style.display = 'none';
-                document.querySelector('.loader').style.display = 'none';
-                document.getElementById('manual').style.display = 'block';
-            }
-        }, 1500);
-
-        // Cầu chì cuối cùng: Nếu sau 5 giây khách không làm gì, tự đẩy sang Drive
-        setTimeout(() => { if (!jumped) goTo(driveUrl); }, 6000);
+        checkLan.src = lanUrl + "?v=" + Date.now();
     </script>
 </body>
 </html>
