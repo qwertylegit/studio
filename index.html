@@ -5,45 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Studio Sản Việt - Download</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; padding: 40px 20px; background: #f0f2f5; color: #333; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; padding: 40px 20px; background: #f4f7f9; color: #333; }
         .container { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 450px; margin: auto; }
-        h2 { color: #1a73e8; margin-bottom: 10px; font-size: 22px; }
-        p { color: #666; margin-bottom: 30px; font-size: 15px; }
+        h2 { color: #2c3e50; margin-bottom: 25px; font-size: 22px; }
         
-        .btn { display: block; padding: 18px; border-radius: 12px; font-weight: bold; text-decoration: none; margin-bottom: 15px; transition: all 0.3s ease; font-size: 16px; position: relative; overflow: hidden; }
+        .btn { display: block; padding: 18px; border-radius: 12px; font-weight: bold; text-decoration: none; margin-bottom: 15px; transition: all 0.3s ease; font-size: 16px; border: none; cursor: pointer; }
         
-        /* Nút LAN - Ưu tiên hàng đầu */
-        .btn-lan { background: #28a745; color: white; border: none; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3); }
-        .btn-lan:active { transform: scale(0.98); }
-        .btn-lan span { display: block; font-size: 12px; font-weight: normal; opacity: 0.9; }
+        /* Nút Drive - Ưu tiên bên trên, màu xanh */
+        .btn-drive { background: #1a73e8; color: white; box-shadow: 0 4px 15px rgba(26, 115, 232, 0.3); }
+        .btn-drive:active { transform: scale(0.98); background: #1557b0; }
 
-        /* Nút Drive - Tùy chọn phụ */
-        .btn-drive { background: #ffffff; color: #444; border: 2px solid #dadce0; }
-        .btn-drive:active { background: #f8f9fa; }
+        /* Nút LAN - Bên dưới, màu đỏ */
+        .btn-lan { background: #d93025; color: white; box-shadow: 0 4px 15px rgba(217, 48, 37, 0.3); }
+        .btn-lan:active { transform: scale(0.98); background: #a52119; }
+        .btn-lan span { display: block; font-size: 12px; font-weight: normal; opacity: 0.9; margin-top: 4px; }
 
-        .footer-note { font-size: 12px; color: #999; margin-top: 20px; }
-        .wifi-icon { font-size: 24px; margin-bottom: 10px; display: block; }
+        .footer-note { font-size: 13px; color: #7f8c8d; margin-top: 25px; line-height: 1.5; }
+        .icon { font-size: 40px; margin-bottom: 15px; display: block; }
     </style>
 </head>
 <body>
     <div class="container">
-        <span class="wifi-icon">📸</span>
+        <span class="icon">📁</span>
         <h2>Tải Ảnh Của Bạn</h2>
-        <p>Vui lòng chọn phương thức tải ảnh nhanh nhất</p>
 
-        <!-- Nút Tải LAN (Nhanh nhất - Phía dưới theo yêu cầu) -->
-        <a id="lanLink" href="#" class="btn btn-lan">
-            DOWNLOAD NỘI BỘ (LAN)
-            <span>Tốc độ cao - Chỉ dành cho Wi-Fi Studio</span>
+        <!-- Nút Tải Drive - ƯU TIÊN BÊN TRÊN, MÀU XANH -->
+        <a id="driveLink" href="#" class="btn btn-drive">
+            DOWNLOAD WITH GOOGLE DRIVE
         </a>
 
-        <!-- Nút Tải Drive (Phía trên theo yêu cầu) -->
-        <a id="driveLink" href="#" class="btn btn-drive">
-            Download with Google Drive
+        <!-- Nút Tải LAN - BÊN DƯỚI, MÀU ĐỎ -->
+        <a id="lanLink" href="#" class="btn btn-lan">
+            DOWNLOAD LAN (TỐC ĐỘ CAO)
+            <span>Chỉ hoạt động khi kết nối Wi-Fi Studio</span>
         </a>
 
         <div class="footer-note">
-            * Nếu dùng 4G, vui lòng chọn Google Drive.
+            <b>Lưu ý:</b> Nếu bạn không ở Studio hoặc đang dùng 4G, <br>vui lòng chọn nút <b>Google Drive</b> màu xanh.
         </div>
     </div>
 
@@ -56,14 +54,15 @@
         const lanUrl = `http://${config.ip}:8080/${config.t}/${config.n}/${config.id}/`;
         const driveUrl = `https://drive.google.com/drive/folders/${config.fid}`;
 
-        // Gán link vào các nút
+        // Gán link cho các nút
         document.getElementById('lanLink').href = lanUrl;
         document.getElementById('driveLink').href = driveUrl;
 
-        // Tự động chuyển hướng nếu phát hiện LAN cực nhanh (Optional)
+        // Cố gắng kiểm tra LAN ngầm để hỗ trợ khách tại Studio
         const checkLan = new Image();
         checkLan.onload = () => {
-            // Chỉ tự nhảy nếu máy khách phản hồi cực nhanh trong 1 giây đầu
+            // Nếu là Wi-Fi cực mạnh và trình duyệt cho phép, tự nhảy vào LAN
+            // Nếu bị chặn, khách vẫn thấy 2 nút để bấm
             window.location.replace(lanUrl);
         };
         checkLan.src = lanUrl + "?v=" + Date.now();
