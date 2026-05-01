@@ -3,70 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Studio Sản Việt - Download</title>
+    <title>Video/Photo Album - Studio Sản Việt</title>
     <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; padding: 40px 20px; background: #f4f7f9; color: #333; }
-        .container { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 450px; margin: auto; }
-        h2 { color: #2c3e50; margin-bottom: 25px; font-size: 22px; }
-        
-        .btn { display: block; padding: 18px; border-radius: 12px; font-weight: bold; text-decoration: none; margin-bottom: 15px; transition: all 0.3s ease; font-size: 16px; border: none; cursor: pointer; }
-        
-        /* Nút Drive - Ưu tiên bên trên, màu xanh */
-        .btn-drive { background: #1a73e8; color: white; box-shadow: 0 4px 15px rgba(26, 115, 232, 0.3); }
-        .btn-drive:active { transform: scale(0.98); background: #1557b0; }
-
-        /* Nút LAN - Bên dưới, màu đỏ */
-        .btn-lan { background: #d93025; color: white; box-shadow: 0 4px 15px rgba(217, 48, 37, 0.3); }
-        .btn-lan:active { transform: scale(0.98); background: #a52119; }
-        .btn-lan span { display: block; font-size: 12px; font-weight: normal; opacity: 0.9; margin-top: 4px; }
-
-        .footer-note { font-size: 13px; color: #7f8c8d; margin-top: 25px; line-height: 1.5; }
-        .icon { font-size: 40px; margin-bottom: 15px; display: block; }
+        body { font-family: sans-serif; text-align: center; padding: 40px 20px; background: #f4f7f9; }
+        .container { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 400px; margin: auto; }
+        .btn { display: block; padding: 18px; border-radius: 12px; font-weight: bold; text-decoration: none; margin-bottom: 15px; font-size: 16px; transition: 0.2s; }
+        .btn-drive { background: #1a73e8; color: white; }
+        .btn-lan { background: #d93025; color: white; }
+        .btn:active { transform: scale(0.98); }
+        h2 { font-size: 20px; color: #333; margin-bottom: 25px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <span class="icon">📁</span>
-        <h2>Tải Video/Ảnh Của Bạn</h2>
-
-        <!-- Nút Tải Drive - ƯU TIÊN BÊN TRÊN, MÀU XANH -->
-        <a id="driveLink" href="#" class="btn btn-drive">
-            DOWNLOAD WITH GOOGLE DRIVE
-        </a>
-
-        <!-- Nút Tải LAN - BÊN DƯỚI, MÀU ĐỎ -->
-        <a id="lanLink" href="#" class="btn btn-lan">
-            DOWNLOAD LAN (TỐC ĐỘ CAO)
-            <span>Chỉ hoạt động khi kết nối Wi-Fi Studio</span>
-        </a>
-
-        <div class="footer-note">
-            <b>Lưu ý:</b> Nếu bạn không ở Studio hoặc đang dùng 4G, <br>vui lòng chọn nút <b>Google Drive</b> màu xanh.
-            <br> <b>by @Sanviet </b>
-        </div>
+        <h2>VIDEO/PHOTO ALBUM</h2>
+        <a id="driveLink" href="#" class="btn btn-drive">TẢI QUA GOOGLE DRIVE</a>
+        <a id="lanLink" href="#" class="btn btn-lan">TẢI TỐC ĐỘ CAO (WIFI)</a>
+        <p style="font-size:12px; color:#666;">© Studio Sản Việt - Nha Trang</p>
     </div>
-
     <script>
         const p = new URLSearchParams(window.location.search);
-        const config = {
-            ip: p.get('ip'), t: p.get('t'), n: p.get('n'), id: p.get('id'), fid: p.get('fid')
-        };
-
-        const lanUrl = `http://${config.ip}:8080/${config.t}/${config.n}/${config.id}/`;
-        const driveUrl = `https://drive.google.com/drive/folders/${config.fid}`;
-
-        // Gán link cho các nút
+        const port = p.get('port') || "8080";
+        const lanUrl = `http://${p.get('ip')}:${port}/${p.get('t')}/${p.get('n')}/${p.get('id')}/`;
+        const driveUrl = `https://drive.google.com/drive/folders/${p.get('fid')}`;
+        
         document.getElementById('lanLink').href = lanUrl;
         document.getElementById('driveLink').href = driveUrl;
 
-        // Cố gắng kiểm tra LAN ngầm để hỗ trợ khách tại Studio
-        const checkLan = new Image();
-        checkLan.onload = () => {
-            // Nếu là Wi-Fi cực mạnh và trình duyệt cho phép, tự nhảy vào LAN
-            // Nếu bị chặn, khách vẫn thấy 2 nút để bấm
-            window.location.replace(lanUrl);
-        };
-        checkLan.src = lanUrl + "?v=" + Date.now();
+        // Tự động chuyển hướng vào LAN nếu đang kết nối Wifi Studio
+        const img = new Image();
+        img.onload = () => window.location.replace(lanUrl);
+        img.src = lanUrl + "?v=" + Date.now();
     </script>
 </body>
 </html>
