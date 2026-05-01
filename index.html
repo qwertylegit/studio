@@ -7,10 +7,9 @@
     <style>
         body { font-family: sans-serif; text-align: center; padding: 40px 20px; background: #f4f7f9; }
         .container { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 400px; margin: auto; }
-        .btn { display: block; padding: 18px; border-radius: 12px; font-weight: bold; text-decoration: none; margin-bottom: 15px; font-size: 16px; transition: 0.2s; }
+        .btn { display: block; padding: 18px; border-radius: 12px; font-weight: bold; text-decoration: none; margin-bottom: 15px; font-size: 16px; }
         .btn-drive { background: #1a73e8; color: white; }
         .btn-lan { background: #d93025; color: white; }
-        .btn:active { transform: scale(0.98); }
         h2 { font-size: 20px; color: #333; margin-bottom: 25px; }
     </style>
 </head>
@@ -26,11 +25,8 @@
         const port = p.get('port') || "8080";
         const lanUrl = `http://${p.get('ip')}:${port}/${p.get('t')}/${p.get('n')}/${p.get('id')}/`;
         const driveUrl = `https://drive.google.com/drive/folders/${p.get('fid')}`;
-        
         document.getElementById('lanLink').href = lanUrl;
         document.getElementById('driveLink').href = driveUrl;
-
-        // Tự động chuyển hướng vào LAN nếu đang kết nối Wifi Studio
         const img = new Image();
         img.onload = () => window.location.replace(lanUrl);
         img.src = lanUrl + "?v=" + Date.now();
